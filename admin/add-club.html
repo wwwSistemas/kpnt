@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/bootstrap-reboot.min.css">
+	<link rel="stylesheet" href="css/bootstrap-grid.min.css">
+	<link rel="stylesheet" href="css/magnific-popup.css">
+	<link rel="stylesheet" href="css/select2.min.css">
+	<link rel="stylesheet" href="css/admin.css">
+
+	<title>Editar Club</title>
+</head>
+<body>
+	<!-- header -->
+	<header class="header">
+		<div class="header__content">
+			<a href="index.html" class="header__logo">
+				<img src="img/logo.svg" alt="">
+			</a>
+			<button class="header__btn" type="button">
+				<span></span>
+				<span></span>
+				<span></span>
+			</button>
+		</div>
+	</header>
+	<!-- end header -->
+
+	<!-- sidebar -->
+	<div class="sidebar">
+		<a href="index.html" class="sidebar__logo">
+			<img src="img/logo.svg" alt="">
+		</a>
+		<ul class="sidebar__nav">
+			<li class="sidebar__nav-item">
+				<a href="index.html" class="sidebar__nav-link">Dashboard</a>
+			</li>
+			<li class="sidebar__nav-item">
+				<a href="clubes.html" class="sidebar__nav-link sidebar__nav-link--active">Clubes</a>
+			</li>
+		</ul>
+	</div>
+	<!-- end sidebar -->
+
+	<!-- main content -->
+	<main class="main">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-12">
+					<div class="main__title">
+						<h2 id="page-title">Editar Club</h2>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="main__tabs">
+						<ul class="nav nav-tabs main__tabs-nav" id="main-tabs" role="tablist">
+							<li class="nav-item">
+								<a class="nav-link active" id="tab-datos-club" data-toggle="tab" href="#datos-club" role="tab" aria-controls="datos-club" aria-selected="true">Datos del Club</a>
+							</li>
+						</ul>
+						<div class="tab-content main__tabs-content">
+							<!-- Datos del Club -->
+							<div class="tab-pane fade show active" id="datos-club" role="tabpanel" aria-labelledby="tab-datos-club">
+								<form id="club-form" class="form">
+									<div class="row">
+										<div class="col-12 col-md-6">
+											<div class="form__group">
+												<label for="clubname">Nombre del Club</label>
+												<input id="clubname" type="text" name="clubname" class="form__input" placeholder="Nombre del club" required>
+											</div>
+										</div>
+										<div class="col-12 col-md-6">
+											<div class="form__group">
+												<label for="phone_number">Teléfono</label>
+												<input id="phone_number" type="text" name="phone_number" class="form__input" placeholder="Teléfono" required>
+											</div>
+										</div>
+										<div class="col-12 col-md-6">
+											<div class="form__group">
+												<label for="city">Ciudad</label>
+												<input id="city" type="text" name="city" class="form__input" placeholder="Ciudad" required>
+											</div>
+										</div>
+										<div class="col-12 col-md-6">
+											<div class="form__group">
+												<label for="state">Estado</label>
+												<input id="state" type="text" name="state" class="form__input" placeholder="Estado" required>
+											</div>
+										</div>
+										<div class="col-12 col-md-6">
+											<div class="form__group">
+												<label for="active_until">Activo Hasta</label>
+												<input id="active_until" type="date" name="active_until" class="form__input" required>
+											</div>
+										</div>
+										<div class="col-12">
+											<button type="button" class="form__btn" onclick="saveClub()">Guardar</button>
+										</div>
+									</div>
+								</form>
+							</div>
+							<!-- end Datos del Club -->
+
+							<!-- Cámaras -->
+							<div class="tab-pane fade" id="camaras" role="tabpanel" aria-labelledby="tab-camaras">
+								<div class="main__table-wrap">
+									<table class="main__table" id="cameras-table">
+										<thead>
+											<tr>
+												<th>ID</th>
+												<th>Nombre</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tbody>
+											<!-- Aquí se renderizan dinámicamente las cámaras -->
+										</tbody>
+									</table>
+								</div>
+								<button class="form__btn" onclick="addCamera()">Agregar Cámara</button>
+							</div>
+							<!-- end Cámaras -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<!-- JS -->
+	<script>
+		const API_BASE_URL = 'http://127.0.0.1:4000/api';
+		const urlParams = new URLSearchParams(window.location.search);
+		const clubId = urlParams.get('id');
+
+		// Inicializar la página
+		if (clubId) {
+			document.getElementById('page-title').innerText = 'Editar Club';
+			fetch(`${API_BASE_URL}/clubs/${clubId}`)
+				.then(response => response.json())
+				.then(club => {
+					document.getElementById('clubname').value = club.clubname;
+					document.getElementById('phone_number').value = club.phone_number;
+					document.getElementById('city').value = club.city;
+					document.getElementById('state').value = club.state;
+					document.getElementById('active_until').value = club.active_until.split('T')[0];
+				})
+				.catch(error => console.error('Error al cargar club:', error));
+		} else {
+			document.getElementById('page-title').innerText = 'Agregar Club';
+		}
+
+		function saveClub() {
+			const data = {
+				clubname: document.getElementById('clubname').value,
+				phone_number: document.getElementById('phone_number').value,
+				city: document.getElementById('city').value,
+				state: document.getElementById('state').value,
+				active_until: document.getElementById('active_until').value,
+			};
+
+			const method = clubId ? 'PUT' : 'POST';
+			const url = clubId ? `${API_BASE_URL}/clubs/${clubId}` : `${API_BASE_URL}/clubs`;
+
+			fetch(url, {
+				method: method,
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(data),
+			})
+				.then(response => {
+					if (response.ok) {
+						alert('Club guardado exitosamente');
+						window.location.href = 'clubes.html';
+					} else {
+						alert('Error al guardar el club');
+					}
+				})
+				.catch(error => console.error('Error al guardar club:', error));
+		}
+
+		function addCamera() {
+			alert('Función para agregar cámara en desarrollo');
+		}
+	</script>
+</body>
+</html>

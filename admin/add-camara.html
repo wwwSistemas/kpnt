@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Cámara</title>
+    <link rel="stylesheet" href="css/bootstrap-reboot.min.css">
+    <link rel="stylesheet" href="css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+    <link rel="stylesheet" href="css/select2.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header__content">
+            <a href="index.html" class="header__logo">
+                <img src="img/logo.svg" alt="Logo">
+            </a>
+            <button class="header__btn" type="button">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a href="index.html" class="sidebar__logo">
+            <img src="img/logo.svg" alt="Logo">
+        </a>
+        <ul class="sidebar__nav">
+            <li class="sidebar__nav-item">
+                <a href="index.html" class="sidebar__nav-link">Dashboard</a>
+            </li>
+            <li class="sidebar__nav-item">
+                <a href="clubes.html" class="sidebar__nav-link">Clubes</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main content -->
+    <main class="main">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="main__title">
+                        <h2>Agregar Cámara</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <form id="camera-form" class="sign__form sign__form--profile">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="sign__group">
+                                    <label for="camera-name">Nombre de la Cámara</label>
+                                    <input id="camera-name" type="text" name="camera-name" class="sign__input" placeholder="Nombre de la cámara" required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="button" class="sign__btn" onclick="saveCamera()">Guardar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:4000/api';
+        const urlParams = new URLSearchParams(window.location.search);
+        const clubId = urlParams.get('clubId');
+
+        function saveCamera() {
+            const cameraName = document.getElementById('camera-name').value;
+
+            fetch(`${API_BASE_URL}/cameras`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: cameraName, club_id: clubId }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Cámara agregada exitosamente');
+                        window.location.href = `edit-club.html?id=${clubId}`;
+                    } else {
+                        alert('Error al agregar la cámara');
+                    }
+                })
+                .catch(error => console.error('Error al agregar la cámara:', error));
+        }
+    </script>
+</body>
+</html>
